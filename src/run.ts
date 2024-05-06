@@ -12,8 +12,8 @@ let base64DecodeZkProgram = ZkProgram({
       privateInputs: [Bytes44.provable],
 
       async method(base64Bytes: Bytes44) {
-        const fields = base64Decode(base64Bytes, Bytes32.size);
-        return Bytes32.provable.fromFields(fields);
+        const decodedBytes = base64Decode(base64Bytes, Bytes32.size);
+        return Bytes32.from(decodedBytes);
       },
     },
   },
@@ -37,15 +37,3 @@ console.timeEnd('prove');
 console.time('verify');
 await base64DecodeZkProgram.verify(proof);
 console.timeEnd('verify');
-
-/* 
-Summary Preview: {
-  'Total rows': 8081,
-  Generic: 1921,
-  EndoMulScalar: 88,
-  RangeCheck0: 2112,
-  RangeCheck1: 1056,
-  Zero: 1848,
-  ForeignFieldAdd: 1056
-}
-*/

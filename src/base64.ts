@@ -1,16 +1,16 @@
-import { Field, Bool, Bytes, assert } from 'o1js';
+import { Field, Bool, Bytes, assert, UInt8 } from 'o1js';
 
 export { base64Decode };
 
 /**
- * Decodes a base64-encoded input bytes to the corresponding decoded field array.
+ * Decodes a base64-encoded input bytes to the corresponding decoded bytes.
  *
  * @param inputBytes The base64-encoded input bytes.
  * @param byteLength The length of the output decoded bytes.
  * @returns The decoded bytes array with the expected length specified by byteLength.
  */
 function base64Decode(inputBytes: Bytes, byteLength: number) {
-  const encodedB64Bytes = inputBytes.toFields();
+  const encodedB64Bytes = inputBytes.bytes;
 
   const charLength = encodedB64Bytes.length;
   assert(
@@ -18,7 +18,7 @@ function base64Decode(inputBytes: Bytes, byteLength: number) {
     'Input base64 byte length should be a multiple of 4!'
   );
 
-  let decodedB64Bytes: Field[] = [];
+  let decodedB64Bytes: UInt8[] = [];
 
   let bitsIn: Bool[][][] = Array.from({ length: charLength / 4 }, () => []);
   let bitsOut: Bool[][][] = Array.from({ length: charLength / 4 }, () =>
@@ -52,53 +52,55 @@ function base64Decode(inputBytes: Bytes, byteLength: number) {
 
     for (let j = 0; j < 3; j++) {
       if (idx + j < byteLength) {
-        decodedB64Bytes[idx + j] = Field.fromBits(bitsOut[i / 4][j]);
+        decodedB64Bytes[idx + j] = new UInt8(
+          Field.fromBits(bitsOut[i / 4][j]).value
+        );
       }
     }
     idx += 3;
   }
 
-  return decodedB64Bytes;
+  return Bytes.from(decodedB64Bytes);
 }
 
 // Adapted from the algorithm described in: http://0x80.pl/notesen/2016-01-17-sse-base64-decoding.html#vector-lookup-base
-function base64Lookup(input: Field): Field {
+function base64Lookup(input: UInt8): Field {
   // A variable to check if the input consists solely of valid base64 characters
-  let isValidBase64Chars = Field(0);
+  let isValidBase64Chars = new Field(0);
 
   // ['A', 'Z']
-  let le_Z = input.lessThan(Field(91 + 1));
-  let ge_A = input.greaterThan(Field(65 - 1));
+  let le_Z = input.lessThan(91 + 1);
+  let ge_A = input.greaterThan(65 - 1);
   let range_AZ = le_Z.and(ge_A);
-  let sum_AZ = range_AZ.toField().mul(input.sub(65));
+  let sum_AZ = range_AZ.toField().mul(input.value.sub(65));
   isValidBase64Chars = isValidBase64Chars.add(range_AZ.toField());
 
   // ['a', 'z']
-  let le_z = input.lessThan(Field(122 + 1));
-  let ge_a = input.greaterThan(Field(97 - 1));
+  let le_z = input.lessThan(122 + 1);
+  let ge_a = input.greaterThan(97 - 1);
   let range_az = le_z.and(ge_a);
-  let sum_az = range_az.toField().mul(input.sub(71)).add(sum_AZ);
+  let sum_az = range_az.toField().mul(input.value.sub(71)).add(sum_AZ);
   isValidBase64Chars = isValidBase64Chars.add(range_az.toField());
 
   // ['0', '9']
-  let le_9 = input.lessThan(Field(57 + 1));
-  let ge_0 = input.greaterThan(Field(48 - 1));
+  let le_9 = input.lessThan(57 + 1);
+  let ge_0 = input.greaterThan(48 - 1);
   let range_09 = le_9.and(ge_0);
-  let sum_09 = range_09.toField().mul(input.add(4)).add(sum_az);
+  let sum_09 = range_09.toField().mul(input.value.add(4)).add(sum_az);
   isValidBase64Chars = isValidBase64Chars.add(range_09.toField());
 
   // '+'
-  let equal_plus = input.equals(43);
-  let sum_plus = equal_plus.toField().mul(input.add(19)).add(sum_09);
+  let equal_plus = input.value.equals(43);
+  let sum_plus = equal_plus.toField().mul(input.value.add(19)).add(sum_09);
   isValidBase64Chars = isValidBase64Chars.add(equal_plus.toField());
 
   // '/'
-  let equal_slash = input.equals(47);
-  let sum_slash = equal_slash.toField().mul(input.add(16)).add(sum_plus);
+  let equal_slash = input.value.equals(47);
+  let sum_slash = equal_slash.toField().mul(input.value.add(16)).add(sum_plus);
   isValidBase64Chars = isValidBase64Chars.add(equal_slash.toField());
 
   // '='
-  let equal_eqsign = input.equals(61);
+  let equal_eqsign = input.value.equals(61);
   isValidBase64Chars = isValidBase64Chars.add(equal_eqsign.toField());
 
   // Validate if input contains only valid base64 characters

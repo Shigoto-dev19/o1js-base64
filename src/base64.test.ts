@@ -14,17 +14,16 @@ describe('Base64 Decode Tests', () => {
     const decodedBytes = base64Decode(
       Bytes.fromString(base64String),
       decodedByteLength
-    ).map((x) => Number(x.toBigInt()));
+    ).toBytes();
 
     // Calculate the expected decoded bytes using JS implementation
     const decodedString = atob(base64String);
-    let expectedDecodedBytes = new Array(decodedString.length);
+    let expectedDecodedBytes = new Uint8Array(decodedString.length);
 
     // Populate the expected decoded bytes array with character codes
     for (let i = 0; i < decodedString.length; i++) {
       expectedDecodedBytes[i] = decodedString.charCodeAt(i);
     }
-
     // Assert that the decoded bytes match the expected decoded bytes
     expect(decodedBytes).toEqual(expectedDecodedBytes);
   }

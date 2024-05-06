@@ -74,26 +74,25 @@ npm run benchmark
 
 ### Preview
 
-| Summary         |      |
-| --------------- | ---- |
-| Total rows      | 8081 |
-| Generic         | 1921 |
-| EndoMulScalar   | 88   |
-| RangeCheck0     | 2112 |
-| RangeCheck1     | 1056 |
-| Zero            | 1848 |
-| ForeignFieldAdd | 1056 |
+| Summary       |      |
+| ------------- | ---- |
+| Total rows    | 2138 |
+| Generic       | 1522 |
+| EndoMulScalar | 616  |
 
 | Action  | Time (s) |
 | ------- | -------- |
-| Compile | 1.985    |
-| Prove   | 15.496   |
-| Verify  | 1.021    |
+| Compile | 1.104    |
+| Prove   | 11.219   |
+| Verify  | 0.844    |
 
 ## Acknowledgement
 
-This repo is inspired by the [circom base64](https://github.com/zkemail/zk-email-verify/blob/main/packages/circuits/lib/base64.circom)
-implementation.
+- This repo is inspired by the [circom base64](https://github.com/zkemail/zk-email-verify/blob/main/packages/circuits/lib/base64.circom)
+  implementation.
+
+- Big thanks to [Gregor Mitscha-Baude](https://twitter.com/mitschabaude) for highlighting the inefficiency in processing full field elements.
+  - By operating on `UInt8` instead of full field elements, the `base64Decode` circuit rows were reduced by around **75%** from **8081** to **2138**.
 
 ## License
 
