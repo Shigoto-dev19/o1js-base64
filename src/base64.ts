@@ -2,6 +2,13 @@ import { Field, Bool, Bytes, assert } from 'o1js';
 
 export { base64Decode };
 
+/**
+ * Decodes a base64-encoded input bytes to the corresponding decoded field array.
+ *
+ * @param inputBytes The base64-encoded input bytes.
+ * @param byteLength The length of the output decoded bytes.
+ * @returns The decoded bytes array with the expected length specified by byteLength.
+ */
 function base64Decode(inputBytes: Bytes, byteLength: number) {
   const encodedB64Bytes = inputBytes.toFields();
 
