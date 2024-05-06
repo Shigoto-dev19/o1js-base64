@@ -1,10 +1,10 @@
 {
   "name": "o1js-base64",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "author": "",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/Shigoto-dev19/o1js-base64.git",
+  "homepage": "https://github.com/Shigoto-dev19/o1js-base64.git#o1js-base64-decode",
   "keywords": [
     "mina-zkapp",
     "mina-zk-app",
