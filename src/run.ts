@@ -1,4 +1,4 @@
-import { ZkProgram, Bytes, Provable } from 'o1js';
+import { ZkProgram, Bytes } from 'o1js';
 import { base64Decode } from './base64.js';
 
 class Bytes44 extends Bytes(44) {}
@@ -12,7 +12,7 @@ let base64DecodeZkProgram = ZkProgram({
       privateInputs: [Bytes44.provable],
 
       async method(base64Bytes: Bytes44) {
-        const fields = base64Decode(base64Bytes.toFields());
+        const fields = base64Decode(base64Bytes, Bytes32.size);
         return Bytes32.provable.fromFields(fields);
       },
     },
@@ -38,18 +38,8 @@ console.time('verify');
 await base64DecodeZkProgram.verify(proof);
 console.timeEnd('verify');
 
-const decodedString = atob('7xQMDuoVVU4m0W0WRVSrVXMeGSIASsnucK9dJsrc+vU=');
-const uint8Array = new Uint8Array(decodedString.length);
-
-for (let i = 0; i < decodedString.length; i++) {
-  uint8Array[i] = decodedString.charCodeAt(i);
-}
-
-Provable.log('Proof bytes: ', proof.publicOutput.toFields());
-console.log('JS decoded bytes: ', uint8Array);
-
 /* 
-{
+Summary Preview: {
   'Total rows': 8081,
   Generic: 1921,
   EndoMulScalar: 88,
