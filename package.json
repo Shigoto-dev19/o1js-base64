@@ -1,14 +1,20 @@
 {
-  "name": "base64-o1js",
-  "version": "0.1.0",
+  "name": "o1js-base64",
+  "version": "0.0.1",
   "description": "",
   "author": "",
   "license": "Apache-2.0",
+  "homepage": "https://github.com/Shigoto-dev19/o1js-base64.git",
   "keywords": [
     "mina-zkapp",
     "mina-zk-app",
     "mina-dapp",
-    "zkapp"
+    "zkapp",
+    "base64",
+    "decode",
+    "zk",
+    "zkSNARK",
+    "zero knowledge"
   ],
   "type": "module",
   "main": "build/src/index.js",
