@@ -1,35 +1,54 @@
-# O1JS Base64 Decode
+# O1JS Base64 Encode/Decode
 
-This repository offers a straightforward way to decode base64-encoded input bytes. It's designed to be easy to use and reliable tool for decoding base64 data in various projects using [o1js](https://docs.minaprotocol.com/zkapps/o1js/).
+This repository offers a straightforward API to encode & decode base64-encoded input bytes. It's designed to be an easy-to-use and reliable tool for encoding & decoding base64 data in various projects using [o1js](https://docs.minaprotocol.com/zkapps/o1js/).
 
 ## How to use the package
 
-1. Install the package
+Install the package
 
 ```sh
 npm install o1js-base64
 ```
 
-2. Import the `base64Decode` function
-
-```typescript
-import { base64Decode } from 'o1js-base64';
-```
-
-3. Import the provable type `Bytes` from `o1js`
+Import the provable type `Bytes` from `o1js`
 
 ```typescript
 import { Bytes } from 'o1js';
 ```
 
-4. For the example of a **string** input:
+### Base64 Decode
+
+1. Import the `base64Decode` function
+
+```typescript
+import { base64Decode } from 'o1js-base64';
+```
+
+2. For the example of a **string** input:
 
 ```typescript
 const encodedB64 = Bytes.fromString('7xQM+vU=');
 const decodedB64 = base64Decode(encodedB64, 5);
 ```
 
+### Base64 Encode
+
+1. Import the `base64Encode` function
+
+```typescript
+import { base64Encode } from 'o1js-base64';
+```
+
+2. For the example of a **string** input:
+
+```typescript
+const inputBytes = Bytes.fromString('Childish Monderino');
+const encodedB64 = base64Encode(inputBytes);
+```
+
 ### Notes
+
+- The `base64Encode` and `base64Decode` functions are interchangeable, but `base64Encode` is slightly more efficient.
 
 - The `base64Decode` function will throw an error if the `encodedB64` length is not a multiple of 4 or contains **non-base64** characters.
 
@@ -45,7 +64,8 @@ const decodedB64 = base64Decode(encodedB64, 5);
 
   - For reference, consider this [snippet](https://github.com/Shigoto-dev19/o1js-base64/blob/main/src/run.ts#L7-L20), which demonstrates a zkProgram designed to decode a base64-encoded SHA256 digest.
   - The encoded input has a length of 44, while the expected decoded output is 32 bytes long.
-  - Therefore, ensure the provable Byte types are accurately and deterministically assigned to match the input and output lengths.
+  - Hence, it's crucial to accurately and deterministically assign provable Byte types to match the input and output lengths.
+  - Similarly, for base64 Encode, ensure the same careful consideration of Byte types.
 
 ## How to build
 
@@ -74,17 +94,37 @@ npm run benchmark
 
 ### Preview
 
+### Base64 Decode zkProgram
+
 | Summary       |      |
 | ------------- | ---- |
 | Total rows    | 2138 |
 | Generic       | 1522 |
 | EndoMulScalar | 616  |
 
+---
+
 | Action  | Time (s) |
 | ------- | -------- |
 | Compile | 1.104    |
 | Prove   | 11.219   |
 | Verify  | 0.844    |
+
+### Base64 Encode zkProgram
+
+| Summary       |      |
+| ------------- | ---- |
+| Total rows    | 1697 |
+| Generic       | 1203 |
+| EndoMulScalar | 494  |
+
+---
+
+| Action  | Time (s) |
+| ------- | -------- |
+| Compile | 0.667    |
+| Prove   | 9.383    |
+| Verify  | 1.047    |
 
 ## Acknowledgement
 
