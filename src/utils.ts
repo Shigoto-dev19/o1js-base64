@@ -1,18 +1,21 @@
 import { randomBytes as generateRandomBytes } from 'node:crypto';
 
-export { generateRandomBase64String, calculateB64DecodedBytesLength };
+export { generateRandomString, calculateB64DecodedBytesLength };
 
-function generateRandomBase64String(maxLength: number): string {
+function generateRandomString(
+  maxLength: number,
+  encoding?: BufferEncoding
+): string {
   // Generate a random length between 1 and maxLength
   const length = Math.floor(Math.random() * maxLength) + 1;
 
   // Generate random bytes or buffer
   const randomBytes = generateRandomBytes(length);
 
-  // Convert to Base64
-  const base64String = randomBytes.toString('base64');
+  // Convert to string given the chosen encoding
+  const randomString = randomBytes.toString(encoding);
 
-  return base64String;
+  return randomString;
 }
 
 function calculateB64DecodedBytesLength(base64String: string): number {

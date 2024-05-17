@@ -1,9 +1,6 @@
 import { Bytes } from 'o1js';
-import { base64Decode } from './base64';
-import {
-  calculateB64DecodedBytesLength,
-  generateRandomBase64String,
-} from './utils';
+import { base64Decode, base64Encode } from './base64';
+import { calculateB64DecodedBytesLength, generateRandomString } from './utils';
 
 describe('Base64 Decode Tests', () => {
   function testBase64Decode(base64String: string) {
@@ -34,8 +31,8 @@ describe('Base64 Decode Tests', () => {
   });
 
   it('should decode a base64-encoded input (1000 iterations)', () => {
-    for (let i = 0; i < 100; i++) {
-      const input = generateRandomBase64String(1000);
+    for (let i = 0; i < 1000; i++) {
+      const input = generateRandomString(100, 'base64');
       testBase64Decode(input);
     }
   });
@@ -49,7 +46,35 @@ describe('Base64 Decode Tests', () => {
   it('should reject input containing non-base64 characters', () => {
     const input = 'ad$=';
     const errorMessage =
-      'Please provide base64-encoded bytes containing only alphanumeric characters and +/=';
+      'Please provide Base64-encoded bytes containing only alphanumeric characters and +/=';
     expect(() => testBase64Decode(input)).toThrowError(errorMessage);
+  });
+});
+
+describe('Base64 Encode Tests', () => {
+  function testBase64Encode(input: string) {
+    const inputBytes = Bytes.fromString(input);
+
+    // Base64 Encode the input bytes
+    const encodedBytes = base64Encode(inputBytes);
+
+    // Calculate the expected encoded bytes using JS implementation
+    const expectedEncodedBytes = Bytes.from(Buffer.from(btoa(input)));
+
+    // Assert that the decoded bytes match the expected decoded bytes
+    expect(encodedBytes).toEqual(expectedEncodedBytes);
+  }
+
+  it('should Base64 encode an input', () => {
+    const input =
+      'ef140c0eea15554e26d16d164554ab55731e1922004ac9ee70af5d26cadcfaf5';
+    testBase64Encode(input);
+  });
+
+  it('should Base64 encode different inputs (1000 iterations)', () => {
+    for (let i = 0; i < 1000; i++) {
+      const input = generateRandomString(100, 'base64');
+      testBase64Encode(input);
+    }
   });
 });
